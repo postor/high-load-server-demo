@@ -12,17 +12,17 @@ const server = http.createServer((req, res) => {
     collectRequestBody(req, body => {
       console.log(body);
       if (!body) {
-        res.json({ error })
+        sendJson(res, { error })
         return
       }
       client.rpush(KEY_QUEUE, body, (error, reply) => {
         error && (res.status = 500)
-        res.json({ error, reply })
+        sendJson(res, { error, reply })
       })
     })
   }
   else {
-    res.json({ error: 'not json' })
+    sendJson(res, { error: 'not json' })
   }
 });
 server.listen(port, (err) => {
@@ -31,6 +31,11 @@ server.listen(port, (err) => {
   }
   console.log(`Example app listening on port ${port}!`)
 })
+
+function sendJson(res, obj) {
+  response.writeHead(200, { "Content-Type": "application/json" })
+  res.end(JSON.stringify(obj))
+}
 
 function collectRequestBody(request, callback) {
   const FORM_URLENCODED = 'application/json';
