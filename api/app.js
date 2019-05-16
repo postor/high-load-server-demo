@@ -1,28 +1,50 @@
-const express = require('express')
+const http = require('http')
 const redis = require('redis')
-const { raw } = require('body-parser')
-const app = express()
 const port = 3000
 
+const KEY_QUEUE = process.env.KEY_QUEUE || 'queue'
 const client = redis.createClient({
   url: process.env.REDIS_URL || 'redis://redis'
 })
 
-const KEY_QUEUE = process.env.KEY_QUEUE || 'queue'
-
-
-app.get('/', (req, res) => res.send('Hello World!'))
-
-app.post('/', raw(), (req, res) => {
-  client.rpush(KEY_QUEUE, req.body, (error, reply) => {
-    error && (res.status = 500)
-    res.json({ error, reply })
-  })
-})
-
-app.listen(port, (err) => {
+const server = http.createServer((req, res) => {
+  if (req.method === 'POST') {
+    collectRequestBody(req, body => {
+      console.log(body);
+      if (!body) {
+        res.json({ error })
+        return
+      }
+      client.rpush(KEY_QUEUE, body, (error, reply) => {
+        error && (res.status = 500)
+        res.json({ error, reply })
+      })
+    })
+  }
+  else {
+    res.json({ error: 'not json' })
+  }
+});
+server.listen(port, (err) => {
   if (err) {
     throw err
   }
   console.log(`Example app listening on port ${port}!`)
 })
+
+function collectRequestBody(request, callback) {
+  const FORM_URLENCODED = 'application/json';
+  if (request.headers['content-type']
+    && request.headers['content-type'].includes(FORM_URLENCODED)) {
+    let body = ''
+    request.on('data', chunk => {
+      body += chunk.toString();
+    })
+    request.on('end', () => {
+      callback(body);
+    })
+  }
+  else {
+    callback(null)
+  }
+}

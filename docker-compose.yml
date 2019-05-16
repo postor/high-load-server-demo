@@ -3,29 +3,30 @@ services:
   api:
     build: ./api
     image: postor/high-load-demo-api
-    deploy:
-      mode: global
+    depends_on:
+      - redis
+    ports:
+      - "3009:3000"
 
   sync:
     build: ./sync
-    image: postor/high-load-demo-sync
-    
+    image: postor/high-load-demo-sync    
     depends_on:
-      - db
+      - redis
       - mongodb
 
   redis:
     image: 'bitnami/redis:latest'
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-      - '6379:6379'
     volumes:
       - redis:/bitnami/redis/data
 
   mongodb:
     image: 'bitnami/mongodb:latest'
-    ports:
-      - "27017:27017"
     volumes:
-      - /path/to/mongodb-persistence:/bitnami
+      - mongodb:/bitnami
+
+volumes:
+  mongodb:
+  redis:
