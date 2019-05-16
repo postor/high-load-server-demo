@@ -28,6 +28,7 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
     volumes:
       - redis:/bitnami/redis/data
+    command: ["redis-server", "--bind", "redis", "--port", "6379"]
 
   mongodb:
     image: 'bitnami/mongodb:latest'
