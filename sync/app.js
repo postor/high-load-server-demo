@@ -1,3 +1,5 @@
+process.on('unhandledRejection', up => { throw up })
+
 const { createClient } = require('redis')
 const { MongoClient } = require('mongodb')
 

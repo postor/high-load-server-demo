@@ -5,10 +5,9 @@ services:
     image: postor/high-load-demo-api
     depends_on:
       - redis
-    links:
-      - redis
     ports:
       - "3009:3000"
+    restart: always
 
   sync:
     build: ./sync
@@ -16,9 +15,7 @@ services:
     depends_on:
       - redis
       - mongodb
-    links:
-      - redis
-      - mongodb
+    restart: always
 
 
   redis:
