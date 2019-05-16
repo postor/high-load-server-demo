@@ -24,7 +24,8 @@ const server = http.createServer((req, res) => {
   else {
     sendJson(res, { error: 'not json' })
   }
-});
+})
+
 server.listen(port, (err) => {
   if (err) {
     throw err
@@ -33,7 +34,7 @@ server.listen(port, (err) => {
 })
 
 function sendJson(res, obj) {
-  response.writeHead(200, { "Content-Type": "application/json" })
+  res.writeHead(200, { "Content-Type": "application/json" })
   res.end(JSON.stringify(obj))
 }
 
@@ -43,10 +44,10 @@ function collectRequestBody(request, callback) {
     && request.headers['content-type'].includes(FORM_URLENCODED)) {
     let body = ''
     request.on('data', chunk => {
-      body += chunk.toString();
+      body += chunk.toString()
     })
     request.on('end', () => {
-      callback(body);
+      callback(body)
     })
   }
   else {
