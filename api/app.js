@@ -12,7 +12,7 @@ const server = http.createServer((req, res) => {
     collectRequestBody(req, body => {
       console.log(body);
       if (!body) {
-        sendJson(res, { error })
+        sendJson(res, { error: 'empty body' })
         return
       }
       client.rpush(KEY_QUEUE, body, (error, reply) => {
