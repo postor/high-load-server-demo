@@ -9,7 +9,7 @@ const KEY_COLLECTION = process.env.KEY_COLLECTION || 'report'
 const BATCH_RECORD_COUNT_LIMIT = 1000
 const redis = createClient({
   url: process.env.REDIS_URL || 'redis://redis'
-})
+}, { useNewUrlParser: true })
   ;
 (async () => {
   const mongo = await mongodb()
@@ -53,7 +53,7 @@ const redis = createClient({
     return new Promise((resolve, reject) => {
       redis.multi()
         .lrange(KEY_QUEUE, 0, BATCH_RECORD_COUNT_LIMIT)
-        .lrem(KEY_QUEUE, BATCH_RECORD_COUNT_LIMIT)
+        .ltrim(KEY_QUEUE, BATCH_RECORD_COUNT_LIMIT, -1)
         .exec((err, data) => {
           if (err) {
             reject(err)

@@ -5,7 +5,7 @@ const port = 3000
 const KEY_QUEUE = process.env.KEY_QUEUE || 'queue'
 const client = redis.createClient({
   url: process.env.REDIS_URL || 'redis://redis'
-})
+}, { useNewUrlParser: true })
 
 const server = http.createServer((req, res) => {
   if (req.method === 'POST') {
