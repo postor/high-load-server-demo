@@ -65,7 +65,7 @@ const redis = createClient({
   }
 
   function wait(miliseconds) {
-    return Promise((resolve) => {
+    return new Promise((resolve) => {
       setTimeout(() => resolve(), miliseconds)
     })
   }
