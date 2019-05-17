@@ -9,19 +9,20 @@ const client = redis.createClient({
 
 const server = http.createServer((req, res) => {
   if (req.method === 'POST') {
+    sendJson(res, { error, reply })
     collectRequestBody(req, body => {
       console.log(body);
       if (!body) {
-        sendJson(res, { error: 'empty body' })
         return
       }
-      client.rpush(KEY_QUEUE, body, (error, reply) => {
-        error && (res.status = 500)
-        sendJson(res, { error, reply })
+      client.rpush(KEY_QUEUE, body, (error) => {
+        if (error) {
+          console.error(`redis fail! restart`)
+          process.exit(1)
+        }
       })
     })
-  }
-  else {
+  } else {
     sendJson(res, { error: 'not json' })
   }
 })

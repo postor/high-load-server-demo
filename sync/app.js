@@ -76,13 +76,17 @@ const redis = createClient({
   function mongodb() {
     return new Promise((resolve, reject) => {
       // Connect using MongoClient
-      MongoClient.connect(process.env.MONGO_URL || 'mongodb://mongodb', function (err, client) {
-        if (err) {
-          reject(err)
-          return
+      MongoClient.connect(
+        process.env.MONGO_URL || 'mongodb://mongodb',
+        { useNewUrlParser: true },
+        function (err, client) {
+          if (err) {
+            reject(err)
+            return
+          }
+          resolve(client)
         }
-        resolve(client)
-      })
+      )
     })
   }
 
